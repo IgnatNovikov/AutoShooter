@@ -348,6 +348,7 @@
 "Assets/Scripts/Enemy.cs"
 "Assets/Scripts/EnemyController.cs"
 "Assets/Scripts/ExplosionController.cs"
+"Assets/Scripts/GameManager.cs"
 "Assets/Scripts/PlayerController.cs"
 "Assets/Scripts/SpawnerController.cs"
 "Assets/Scripts/TilemapController.cs"
