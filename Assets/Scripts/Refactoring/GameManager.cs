@@ -45,6 +45,6 @@ public class GameManager : MonoBehaviour
     void RestartGame()
     {
         _spawner.Restart();
-        _player.Restart();
+        //_player.Restart();
     }
 }

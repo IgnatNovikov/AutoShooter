@@ -37,7 +37,7 @@ public class Enemy : MonoBehaviour
         //Debug.Log(collision.gameObject.tag);
         if (collision.gameObject.tag == "Player")
         {
-            collision.gameObject.GetComponent<PlayerController>().GetHit(damage);
+            //collision.gameObject.GetComponent<PlayerController>().GetHit(damage);
             Death();
         }
     }

@@ -675,17 +675,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1866e6b2c5e201049b6f6c0029d2804c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  health_points: 10
-  fire_rate: 1
-  fire_range: 14
-  damage: 1
-  bullet_speed: 5
-  bullet: {fileID: 5644001576375710806, guid: c12af30ae532dd842921fb672b46c3a0, type: 3}
-  bullet_container: {fileID: 782563543}
-  enemy_mask: Enemy
-  spawner: {fileID: 2052267532}
-  hp_text: {fileID: 1441419804}
-  ui: {fileID: 1826761243}
+  _bulletPrefab: {fileID: 5603090448084265864, guid: 2e492488f8693c04fb527c71c7811eab, type: 3}
+  _bulletSpeed: 5
 --- !u!61 &883264656
 BoxCollider2D:
   m_ObjectHideFlags: 0

@@ -4,18 +4,45 @@ using UnityEngine;
 
 abstract public class PoolController
 {
-    private List<PoolObject> _poolObjects = new List<PoolObject>();
-    private List<PoolObject> _activePoolObjects = new List<PoolObject>();
+    protected List<PoolObject> _poolObjects;
 
-    abstract public void Initialize();
+    abstract public void AddObject(GameObject poolObject, Transform parentTransform);
 
-    abstract public void AddObject(PoolObject poolObject, Transform parentTransform, Transform spawnSpot);
+    abstract public void AddObject(GameObject poolObject, Transform parentTransform, Transform spawnSpot);
 
     abstract public void AddMultipleObjects(PoolObject poolObject, Transform parentTransform, Transform spawnSpot, int count);
 
-    abstract public PoolObject GetObject();
+    public PoolObject GetObject(Transform parentTransform)
+    {
+        return GetObject(parentTransform, parentTransform);
+    }
 
-    public bool AllInactive()
+    public PoolObject GetObject(Transform parentTransform, Transform spawnSpot)
+    {
+        PoolObject free = GetFree();
+        if (free != null)
+        {
+            return free;
+        }
+
+        AddObject(_poolObjects[0].gameObject, parentTransform, spawnSpot);
+        return _poolObjects[_poolObjects.Count - 1];
+    }
+
+
+    private PoolObject GetFree()
+    {
+        for (int i = 0; i < _poolObjects.Count; i++)
+        {
+            if (_poolObjects[i].gameObject.activeInHierarchy == false)
+            {
+                return _poolObjects[i];
+            }
+        }
+        return null;
+    }
+
+    public bool IsAllInactive()
     {
         foreach (PoolObject unit in _poolObjects)
         {

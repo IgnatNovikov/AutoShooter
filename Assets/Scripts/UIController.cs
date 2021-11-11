@@ -51,6 +51,6 @@ public class UIController : MonoBehaviour
         HideWindow();
 
         spawner.Restart();
-        player.Restart();
+        //player.Restart();
     }
 }

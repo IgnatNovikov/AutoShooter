@@ -66,6 +66,9 @@
     <Compile Include="Assets\Scripts\EnemyController.cs" />
     <Compile Include="Assets\Scripts\ExplosionController.cs" />
     <Compile Include="Assets\Scripts\Refactoring\PoolObject.cs" />
+    <Compile Include="Assets\Scripts\Refactoring\BulletObject.cs" />
+    <Compile Include="Assets\Scripts\Refactoring\ICollidable.cs" />
+    <Compile Include="Assets\Scripts\Refactoring\BulletPool.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">
