@@ -15,6 +15,12 @@ public class PlayerController : MonoBehaviour
         Debug.Log(_bulletPool.GetObject(transform));
     }
 
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Mouse0))
+            _bulletPool.GetObject(transform).Launch(transform, 5);
+    }
+
     /*
     [SerializeField, Min(0)] int health_points;
     int current_hp;

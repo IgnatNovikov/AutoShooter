@@ -12,7 +12,7 @@ public class BulletObject : PoolObject
 
     private void Start()
     {
-        //Debug.Log(gameObject.name);
+        SetSpeed(0);
     }
 
     private void Update()
@@ -25,32 +25,32 @@ public class BulletObject : PoolObject
         if (_moves)
         {
             Move(_lastDirection);
-            //transform.rotation = Quaternion.LookRotation(new Vector3(0, 0, 1), _lastDirection);
             transform.rotation = Quaternion.LookRotation(Vector3.forward, _lastDirection);
         }
     }
 
-    public IEnumerator Counter(Transform target)
+    public override void Launch(Transform target, float speed)
     {
         gameObject.SetActive(true);
+        
+        _speed = speed;
+        StartCoroutine(Counter(target));
+    }
+
+    private IEnumerator Counter(Transform target)
+    {
+        _lifeTime = CalculateCounterFromDistance();
+        Debug.Log(_maxRange / _speed);
 
         _target = target;
-        //_lastDirection = _target.position - transform.position;
         _moves = true;
 
         yield return _lifeTime;
 
         if (this != null)
         {
-            Death();
+            ReturnToPool();
         }
-    }
-
-    public override void Death()
-    {
-        _moves = false;
-
-        ReturnToPool();
     }
 
     private WaitForSeconds CalculateCounterFromDistance()
@@ -65,7 +65,7 @@ public class BulletObject : PoolObject
         if (other != null)
         {
             other.GetHit(_damage);
-            Death();
+            ReturnToPool();
         }
     }
 }

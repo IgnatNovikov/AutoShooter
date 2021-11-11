@@ -13,17 +13,19 @@ abstract public class PoolObject : MonoBehaviour
         gameObject.SetActive(false);
     }
 
+    public void Move(Vector3 direction)
+    {
+        transform.Translate(Time.deltaTime * _speed * _direction.normalized);
+    }
+
+    abstract public void Launch(Transform target, float speed);
+
     protected void SetSpeed(float speed)
     {
         if (speed > 0)
             _speed = speed;
         else
             _speed = 0;
-    }
-
-    public void Move(Vector3 direction)
-    {
-        transform.Translate(Time.deltaTime * _speed * _direction.normalized);
     }
 
     abstract public void Death();

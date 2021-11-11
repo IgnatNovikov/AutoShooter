@@ -4,34 +4,47 @@ using UnityEngine;
 
 public class BulletPool : PoolController
 {
+    private List<BulletObject> _bullets;
+
     public BulletPool(GameObject prefab, Transform parent, float speed, int damage, float maxRange, int count)
     {
-        _poolObjects = new List<PoolObject>();
+        _prefab = prefab;
+        _bullets = new List<BulletObject>();
 
         for (int i = 0; i < count; i++)
         {
-            AddObject(prefab, parent);
+            AddObject(_prefab);
         }
     }
 
-    public override void AddObject(GameObject poolObject, Transform parentTransform)
+    protected override PoolObject GetObject(Transform parentTransform, Transform spawnSpot)
     {
-        GameObject newObject = GameObject.Instantiate(poolObject.gameObject);
-        newObject.transform.position = parentTransform.position;
-        newObject.transform.parent = parentTransform;
-
-        _poolObjects.Add(newObject.GetComponent<PoolObject>());
+        return new BulletObject();
     }
 
-    public override void AddObject(GameObject poolObject, Transform parentTransform, Transform spawnSpot)
+    protected override PoolObject GetFree()
+    {
+        foreach (BulletObject bullet in _bullets)
+        {
+            if (!bullet.gameObject.activeInHierarchy)
+                return bullet;
+        }
+
+        AddObject(_prefab);
+
+        return _bullets[_bullets.Count - 1];
+    }
+
+    public override void AddObject(GameObject poolObject)
     {
         GameObject newObject = GameObject.Instantiate(poolObject);
-
-        _poolObjects.Add(newObject.GetComponent<PoolObject>());
     }
 
-    public override void AddMultipleObjects(PoolObject poolObject, Transform parentTransform, Transform spawnSpot, int count)
+    public override void AddMultipleObjects(PoolObject poolObject, int count)
     {
-        
+        for (int i = 0; i < count; i++)
+        {
+            AddObject(poolObject.gameObject);
+        }
     }
 }
