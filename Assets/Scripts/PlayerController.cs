@@ -5,23 +5,6 @@ using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
 {
-    [SerializeField] private GameObject _bulletPrefab;
-    [SerializeField] private float _bulletSpeed;
-    private BulletPool _bulletPool;
-
-    private void Start()
-    {
-        _bulletPool = new BulletPool(_bulletPrefab, transform, _bulletSpeed, 1, 14, 5);
-        Debug.Log(_bulletPool.GetObject(transform));
-    }
-
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Mouse0))
-            _bulletPool.GetObject(transform).Launch(transform, 5);
-    }
-
-    /*
     [SerializeField, Min(0)] int health_points;
     int current_hp;
 
@@ -130,5 +113,4 @@ public class PlayerController : MonoBehaviour
     {
         hp_text.text = "HEALTH: " + current_hp;
     }
-    */
 }

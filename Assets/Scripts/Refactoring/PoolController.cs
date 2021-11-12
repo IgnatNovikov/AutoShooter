@@ -2,24 +2,49 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-abstract public class PoolController
+public class PoolController
 {
+    private List<PoolObject> _poolObjects = new List<PoolObject>();
+
     protected GameObject _prefab;
 
     protected Transform _parentTransform;
-    protected Transform _spawnSpot;
 
-    abstract public void AddObject(GameObject poolObject);
-
-    abstract public void AddMultipleObjects(PoolObject poolObject, int count);
-
-    public PoolObject GetObject(Transform parentTransform)
+    public PoolController(PoolObject prefab, int count)
     {
-        return GetObject(parentTransform, parentTransform);
+        _prefab = prefab.gameObject;
+
+        for (int i = 0; i < count; i++)
+        {
+            AddObject(prefab);
+        }
     }
 
-    abstract protected PoolObject GetObject(Transform parentTransform, Transform spawnSpot);
+    public void AddObject(PoolObject poolObject)
+    {
+        GameObject newObject = GameObject.Instantiate(_prefab.gameObject);
+        newObject.SetActive(false);
 
+        _poolObjects.Add(newObject.GetComponent<PoolObject>());
+    }
 
-    abstract protected PoolObject GetFree();
+    public GameObject GetObject()
+    {
+        GameObject freeObject;
+        for (int i = 0; i < _poolObjects.Count; i++)
+        {
+            freeObject = _poolObjects[i].gameObject;
+
+            if (!freeObject.activeInHierarchy)
+                return freeObject;
+        }
+
+        AddObject(_poolObjects[0]);
+        return _poolObjects[_poolObjects.Count - 1].gameObject;
+    }
+
+    public int GetCount()
+    {
+        return _poolObjects.Count;
+    }
 }

@@ -354,7 +354,6 @@
 "Assets/Scripts/Refactoring/EnemyObject.cs"
 "Assets/Scripts/Refactoring/EnemyPool.cs"
 "Assets/Scripts/Refactoring/GameManager.cs"
-"Assets/Scripts/Refactoring/ICollidable.cs"
 "Assets/Scripts/Refactoring/IMover.cs"
 "Assets/Scripts/Refactoring/PoolController.cs"
 "Assets/Scripts/Refactoring/PoolObject.cs"

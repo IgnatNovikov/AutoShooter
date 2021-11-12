@@ -2,45 +2,91 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EnemyPool : PoolController
+public class EnemyPool : MonoBehaviour
 {
-    private List<EnemyObject> _enemies;
+    [SerializeField] private GameObject _enemyPrefab;
 
-    public EnemyPool(GameObject prefab, Transform parent, float speed, int damage, float maxRange, int count)
+    [SerializeField] private int _enemiesMinCount;
+    [SerializeField] private int _enemiesMaxCount;
+
+    [SerializeField] private int _enemiesMinTimer;
+    [SerializeField] private int _enemiesMaxTimer;
+
+    [Header("Spot parameters")]
+    [SerializeField] private int _spotCount;
+    [SerializeField] private GameObject _spot;
+    [SerializeField] private Transform _leftSide;
+    [SerializeField] private Transform _rightSide;
+    
+    private GameManager _gameManager;
+    private UIController _ui;
+
+    private int _enemiesCounter;
+    private List<GameObject> _spots = new List<GameObject>();
+    
+    private bool _spawn = false;
+
+    private PoolController _enemies;
+
+    private void Start()
     {
-        _enemies = new List<EnemyObject>();
+        _gameManager = GameManager.Instance;
+        _ui = _gameManager.UI;
 
-        for (int i = 0; i < count; i++)
-        {
-            AddObject(prefab);
-        }
+        _enemies = new PoolController(_enemyPrefab.GetComponent<EnemyObject>(), Random.Range(_enemiesMinCount, _enemiesMaxCount));
+
+        Debug.Log(_enemies.GetCount());
+
+        SeedSpots();
+        StartCoroutine(SpawnEnemy());
     }
 
-    protected override PoolObject GetObject(Transform parentTransform, Transform spawnSpot)
-    {
-        return new BulletObject();
-    }
-
-    protected override PoolObject GetFree()
-    {
-        foreach (EnemyObject enemy in _enemies)
-        {
-            if (!enemy.gameObject.activeInHierarchy)
-                return enemy;
-        }
-
-        AddObject(_prefab);
-
-        return _enemies[_enemies.Count - 1];
-    }
-
-    public override void AddObject(GameObject poolObject)
+    private void Update()
     {
         
     }
 
-    public override void AddMultipleObjects(PoolObject poolObject, int count)
+    private void SeedSpots()
     {
-        
+        _spots.Clear();
+
+        Vector2 left = GetSpotPosition(_leftSide);
+        Vector2 right = GetSpotPosition(_rightSide);
+
+        float spacing = (right.x - left.x) / (_spotCount + 1);
+        Vector3 space = new Vector3(left.x, left.y, 0);
+
+        for (int i = 0; i < _spotCount; i++)
+        {
+            GameObject newSpot = Instantiate(_spot);
+            newSpot.transform.SetParent(transform);
+            space.x = left.x + spacing * (i + 1);
+            newSpot.transform.position = space;
+            _spots.Add(newSpot);
+        }
+    }
+
+    private Vector2 GetSpotPosition(Transform spot)
+    {
+        Vector3 pos = Camera.main.ScreenToWorldPoint(spot.position);
+        return new Vector2(pos.x, pos.y);
+    }
+
+    IEnumerator SpawnEnemy()
+    {
+        _spawn = false;
+        yield return new WaitForSeconds(Random.Range(_enemiesMinTimer, _enemiesMaxTimer));
+
+        GameObject enemy = _enemies.GetObject();
+        enemy.transform.SetParent(transform);
+        enemy.transform.position = _spots[Random.Range(0, _spots.Count)].transform.position;
+        enemy.SetActive(true);
+
+        _enemiesCounter--;
+        if (_enemiesCounter <= 0)
+            StopCoroutine(SpawnEnemy());
+
+        _spawn = true;
+        StartCoroutine(SpawnEnemy());
     }
 }

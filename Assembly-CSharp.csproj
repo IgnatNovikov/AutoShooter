@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <LangVersion>latest</LangVersion>
+    <LangVersion>8.0</LangVersion>
   </PropertyGroup>
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -53,10 +53,13 @@
     <UnityVersion>2021.1.14f1</UnityVersion>
   </PropertyGroup>
   <ItemGroup>
+    <Analyzer Include="C:\Program Files (x86)\Microsoft Visual Studio Tools for Unity\16.0\Analyzers\Microsoft.Unity.Analyzers.dll" />
+  </ItemGroup>
+  <ItemGroup>
     <Compile Include="Assets\Scripts\BulletController.cs" />
     <Compile Include="Assets\Scripts\Refactoring\PoolController.cs" />
     <Compile Include="Assets\Scripts\BackgroundController.cs" />
-    <Compile Include="Assets\Scripts\Refactoring\ICollidable.cs" />
+    <Compile Include="Assets\Scripts\Refactoring\EnemyPool.cs" />
     <Compile Include="Assets\Scripts\PlayerController.cs" />
     <Compile Include="Assets\Scripts\Refactoring\IMover.cs" />
     <Compile Include="Assets\Scripts\TilemapController.cs" />
@@ -65,12 +68,11 @@
     <Compile Include="Assets\Scripts\SpawnerController.cs" />
     <Compile Include="Assets\Scripts\Refactoring\GameManager.cs" />
     <Compile Include="Assets\Scripts\Refactoring\BulletPool.cs" />
+    <Compile Include="Assets\Scripts\Refactoring\EnemyObject.cs" />
     <Compile Include="Assets\Scripts\EnemyController.cs" />
     <Compile Include="Assets\Scripts\ExplosionController.cs" />
     <Compile Include="Assets\Scripts\Refactoring\BulletObject.cs" />
     <Compile Include="Assets\Scripts\Refactoring\PoolObject.cs" />
-    <Compile Include="Assets\Scripts\Refactoring\EnemyObject.cs" />
-    <Compile Include="Assets\Scripts\Refactoring\EnemyPool.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">

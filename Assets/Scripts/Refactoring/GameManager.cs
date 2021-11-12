@@ -9,6 +9,7 @@ public class GameManager : MonoBehaviour
     [Header("References")]
     [SerializeField] private PlayerController _player;
     [SerializeField] private SpawnerController _spawner;
+    [SerializeField] private UIController _ui;
 
     public PlayerController Player
     {
@@ -18,6 +19,11 @@ public class GameManager : MonoBehaviour
     public SpawnerController Spawner
     {
         get => _spawner;
+    }
+
+    public UIController UI
+    {
+        get => _ui;
     }
 
     private void Awake()

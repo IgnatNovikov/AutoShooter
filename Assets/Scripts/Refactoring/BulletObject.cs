@@ -2,17 +2,20 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BulletObject : PoolObject
+public class BulletObject : PoolObject, IMover
 {
-    private static int _damage;
-    private static float _maxRange;
+    [SerializeField] private static float _speed;
+    [SerializeField] private static int _damage;
+    [SerializeField] private static float _maxRange;
     private Transform _target;
     private Vector3 _lastDirection;
     private static WaitForSeconds _lifeTime;
 
+    private bool _moves;
+
     private void Start()
     {
-        SetSpeed(0);
+        _moves = false;
     }
 
     private void Update()
@@ -29,7 +32,12 @@ public class BulletObject : PoolObject
         }
     }
 
-    public override void Launch(Transform target, float speed)
+    public void Move(Vector3 direction)
+    {
+        transform.Translate(Time.deltaTime * _speed * direction);
+    }
+
+    public void Launch(Transform target, float speed)
     {
         gameObject.SetActive(true);
         
