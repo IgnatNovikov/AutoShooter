@@ -10,17 +10,11 @@ public class EnemyObject : PoolObject, IMover
 
     private void Update()
     {
-        if (_moves)
-            Move(Vector3.down);
+        Move(Vector3.up);
     }
 
     public void Move(Vector3 direction)
     {
         transform.Translate(Time.deltaTime * _speed * direction);
-    }
-
-    public void Launch(Transform target, float speed)
-    {
-        _moves = true;
     }
 }

@@ -23,8 +23,6 @@ public class EnemyPool : MonoBehaviour
 
     private int _enemiesCounter;
     private List<GameObject> _spots = new List<GameObject>();
-    
-    private bool _spawn = false;
 
     private PoolController _enemies;
 
@@ -38,12 +36,8 @@ public class EnemyPool : MonoBehaviour
         Debug.Log(_enemies.GetCount());
 
         SeedSpots();
+        //_gameManager.Player.CanShoot();
         StartCoroutine(SpawnEnemy());
-    }
-
-    private void Update()
-    {
-        
     }
 
     private void SeedSpots()
@@ -74,7 +68,6 @@ public class EnemyPool : MonoBehaviour
 
     IEnumerator SpawnEnemy()
     {
-        _spawn = false;
         yield return new WaitForSeconds(Random.Range(_enemiesMinTimer, _enemiesMaxTimer));
 
         GameObject enemy = _enemies.GetObject();
@@ -86,7 +79,11 @@ public class EnemyPool : MonoBehaviour
         if (_enemiesCounter <= 0)
             StopCoroutine(SpawnEnemy());
 
-        _spawn = true;
         StartCoroutine(SpawnEnemy());
+    }
+
+    public List<GameObject> GetEnemies()
+    {
+        return _enemies.GetAllActive();
     }
 }

@@ -8,7 +8,7 @@ public class GameManager : MonoBehaviour
 
     [Header("References")]
     [SerializeField] private PlayerController _player;
-    [SerializeField] private SpawnerController _spawner;
+    [SerializeField] private EnemyPool _spawner;
     [SerializeField] private UIController _ui;
 
     public PlayerController Player
@@ -16,7 +16,7 @@ public class GameManager : MonoBehaviour
         get => _player;
     }
 
-    public SpawnerController Spawner
+    public EnemyPool Spawner
     {
         get => _spawner;
     }
@@ -50,7 +50,7 @@ public class GameManager : MonoBehaviour
 
     void RestartGame()
     {
-        _spawner.Restart();
+        //_spawner.Restart();
         //_player.Restart();
     }
 }

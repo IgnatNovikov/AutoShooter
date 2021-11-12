@@ -4,18 +4,19 @@ using UnityEngine;
 
 public class BulletObject : PoolObject, IMover
 {
-    [SerializeField] private static float _speed;
-    [SerializeField] private static int _damage;
-    [SerializeField] private static float _maxRange;
+    [SerializeField] private float _speed;
+    [SerializeField] private int _damage;
+    [SerializeField] private float _maxRange;
     private Transform _target;
     private Vector3 _lastDirection;
     private static WaitForSeconds _lifeTime;
+    private RaycastHit2D _ray;
 
     private bool _moves;
 
     private void Start()
     {
-        _moves = false;
+        _moves = true;
     }
 
     private void Update()
@@ -27,14 +28,36 @@ public class BulletObject : PoolObject, IMover
 
         if (_moves)
         {
+            if (Hit())
+            {
+                Debug.Log(_ray.collider.gameObject.name);
+            }
             Move(_lastDirection);
             transform.rotation = Quaternion.LookRotation(Vector3.forward, _lastDirection);
         }
     }
 
+    public void SetParameters(float speed, int damage, float maxRange)
+    {
+        if (speed > 0)
+        {
+            _speed = speed;
+        }
+
+        if (damage > 0)
+        {
+            _damage = damage;
+        }
+
+        if (maxRange > 0)
+        {
+            _maxRange = maxRange;
+        }
+    }
+
     public void Move(Vector3 direction)
     {
-        transform.Translate(Time.deltaTime * _speed * direction);
+        transform.Translate(Time.deltaTime * _speed * direction.normalized);
     }
 
     public void Launch(Transform target, float speed)
@@ -66,14 +89,18 @@ public class BulletObject : PoolObject, IMover
         return new WaitForSeconds(_maxRange / _speed);
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    public void SetTarget(Transform target)
     {
-        Enemy other = collision.gameObject.GetComponent<Enemy>();
+        _target = target;
+    }
 
-        if (other != null)
-        {
-            other.GetHit(_damage);
-            ReturnToPool();
-        }
+    private bool Hit()
+    {
+        _ray = Physics2D.Raycast(transform.position, _target.position - transform.position, Time.deltaTime * _speed);
+        Debug.DrawLine(transform.position, transform.position + (Time.deltaTime * 150 * (_target.position - transform.position).normalized));
+        if (_ray)
+            return true;
+
+        return false;
     }
 }

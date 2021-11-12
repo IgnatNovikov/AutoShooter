@@ -43,6 +43,26 @@ public class PoolController
         return _poolObjects[_poolObjects.Count - 1].gameObject;
     }
 
+    public List<GameObject> GetAllActive()
+    {
+        if (_poolObjects.Count == 0)
+            return null;
+
+        List<GameObject> active = new List<GameObject>();
+        GameObject activeObject;
+        for (int i = 0; i < _poolObjects.Count; i++)
+        {
+            activeObject = _poolObjects[i].gameObject;
+
+            if (activeObject.activeInHierarchy)
+            {
+                active.Add(activeObject);
+            }
+        }
+
+        return active;
+    }
+
     public int GetCount()
     {
         return _poolObjects.Count;

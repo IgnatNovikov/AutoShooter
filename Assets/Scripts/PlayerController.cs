@@ -5,30 +5,45 @@ using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
 {
-    [SerializeField, Min(0)] int health_points;
-    int current_hp;
+    [Header("Player parameters")]
+    [SerializeField, Min(0)] private int _maxHealthPoints;
+    private int _currentHp;
 
-    [SerializeField] float fire_rate;
-    [SerializeField] float fire_range;
-    [SerializeField] int damage;
-    [SerializeField] float bullet_speed;
+    [Header("Bullet parameters")]
+    [SerializeField] private float _fireRate;
+    [SerializeField] private float _fireRange;
+    [SerializeField] private int _damage;
+    [SerializeField] private float _bulletSpeed;
 
-    [SerializeField] GameObject bullet;
-    [SerializeField] Transform bullet_container;
+    [SerializeField] private GameObject _bullet;
+    [SerializeField] private Transform _bulletContainer;
 
-    [SerializeField] string enemy_mask;
+    [Header("")]
+    [SerializeField] private string _enemyMask;
+    private int _layerMask;
 
-    [SerializeField] SpawnerController spawner;
+    [Header("UI elements")]
+    [SerializeField] private Text _hpText;
+    [SerializeField] private UIController _ui;
 
-    [SerializeField] Text hp_text;
-    [SerializeField] UIController ui;
+    private PoolController _bullets;
 
-    GameObject nearest_enemy;
+    private WaitForSeconds _shotDelay;
+    private Transform _nearestEnemy;
+    private GameManager _gameManager;
 
-    bool can_shoot;
+    private bool _canShoot;
 
-    private void Awake()
+    private void Start()
     {
+        _bullets = new PoolController(_bullet.GetComponent<BulletObject>(), 4);
+
+        _gameManager = GameManager.Instance;
+        _ui = _gameManager.UI;
+        _shotDelay = new WaitForSeconds(_fireRate);
+
+        _layerMask = (1 << LayerMask.NameToLayer(_enemyMask));
+
         Restart();
     }
 
@@ -38,53 +53,49 @@ public class PlayerController : MonoBehaviour
             StartCoroutine(Shooting());
     }
 
-    IEnumerator Shooting()
+    private IEnumerator Shooting()
     {
-        can_shoot = false;
+        _canShoot = false;
 
-        GameObject new_bullet = Instantiate(bullet);
-        SetBullet(new_bullet);
+        GameObject newBullet = _bullets.GetObject();
+        SetBullet(newBullet);
 
-        yield return new WaitForSeconds(fire_rate);
-        can_shoot = true;
+        yield return _shotDelay;
+        _canShoot = true;
     }
 
-    void SetBullet(GameObject bullet)
+    private void SetBullet(GameObject bullet)
     {
-        bullet.transform.parent = bullet_container;
+        bullet.transform.parent = _bulletContainer;
         bullet.transform.position = transform.position;
-        bullet.transform.rotation = Quaternion.LookRotation(new Vector3(0, 0, 1), nearest_enemy.transform.position - transform.position);
+        bullet.transform.rotation = Quaternion.LookRotation(new Vector3(0, 0, 1), _nearestEnemy.position - transform.position);
+        bullet.transform.GetComponent<BulletObject>().SetTarget(_nearestEnemy.transform);
 
-        StartCoroutine(bullet.GetComponent<BulletController>().Counter(damage, bullet_speed, fire_range, nearest_enemy));
+        bullet.SetActive(true);
     }
 
-    bool CheckNearestEnemy()
+    private bool CheckNearestEnemy()
     {
-        if (!can_shoot)
+        if (!_canShoot)
             return false;
 
         float min_range = float.MaxValue;
-        int layerMask = (1 << LayerMask.NameToLayer(enemy_mask));
 
-        List<GameObject> enemies = spawner.GetEnemies();
-        if (enemies.Count > 0)
+        List<GameObject> enemies = _gameManager.Spawner.GetEnemies();
+
+        foreach (GameObject enemy in enemies)
         {
-            foreach (GameObject enemy in enemies)
+            float range = enemy.transform.position.y - transform.position.y;
+            RaycastHit2D ray = Physics2D.Raycast(transform.position, enemy.transform.position - transform.position, _fireRange, _layerMask);
+
+            if (ray.collider)
             {
-                float range = enemy.transform.position.y - transform.position.y;
-                RaycastHit2D ray = Physics2D.Raycast(transform.position, enemy.transform.position - transform.position, fire_range, layerMask);
-                
-                if (ray.collider != null)
-                {
-                    if (ray.collider.gameObject == enemy && range < min_range)
-                    {
-                        min_range = range;
-                        nearest_enemy = enemy;
-                    }
-                }
+                Debug.Log("PEW");
+                min_range = range;
+                _nearestEnemy = enemy.transform;
             }
         }
-        if (min_range < fire_range)
+        if (min_range < _fireRange)
         {
             return true;
         }
@@ -94,23 +105,26 @@ public class PlayerController : MonoBehaviour
 
     public void GetHit(int damage)
     {
-        current_hp -= damage;
+        _currentHp -= damage;
         Redraw_HP();
-        if (current_hp <= 0)
+        if (_currentHp <= 0)
         {
-            ui.Defeat();
+            _ui.Defeat();
         }
     }
 
     public void Restart()
     {
-        can_shoot = true;
-        current_hp = health_points;
+        _canShoot = true;
+        _currentHp = _maxHealthPoints;
+
+        _bullet.GetComponent<BulletObject>().SetParameters(_bulletSpeed, _damage, _fireRange);
+
         Redraw_HP();
     }
 
-    void Redraw_HP()
+    private void Redraw_HP()
     {
-        hp_text.text = "HEALTH: " + current_hp;
+        _hpText.text = _currentHp.ToString();
     }
 }
