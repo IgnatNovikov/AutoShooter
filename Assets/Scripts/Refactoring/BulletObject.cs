@@ -14,6 +14,11 @@ public class BulletObject : PoolObject, IMover
 
     private bool _moves;
 
+    public float Speed
+    {
+        get => _speed;
+    }
+
     private void Start()
     {
         _moves = true;
@@ -30,7 +35,9 @@ public class BulletObject : PoolObject, IMover
         {
             if (Hit())
             {
-                Debug.Log(_ray.collider.gameObject.name);
+                _ray.collider.gameObject.GetComponent<EnemyObject>().GetHit(_damage);
+                StopAllCoroutines();
+                ReturnToPool();
             }
             Move(_lastDirection);
             transform.rotation = Quaternion.LookRotation(Vector3.forward, _lastDirection);
@@ -71,7 +78,6 @@ public class BulletObject : PoolObject, IMover
     private IEnumerator Counter(Transform target)
     {
         _lifeTime = CalculateCounterFromDistance();
-        Debug.Log(_maxRange / _speed);
 
         _target = target;
         _moves = true;
@@ -96,8 +102,7 @@ public class BulletObject : PoolObject, IMover
 
     private bool Hit()
     {
-        _ray = Physics2D.Raycast(transform.position, _target.position - transform.position, Time.deltaTime * _speed);
-        Debug.DrawLine(transform.position, transform.position + (Time.deltaTime * 150 * (_target.position - transform.position).normalized));
+        _ray = Physics2D.Raycast(transform.position, _target.position - transform.position, Time.deltaTime * _speed, GameManager.Instance.enemyMask);
         if (_ray)
             return true;
 

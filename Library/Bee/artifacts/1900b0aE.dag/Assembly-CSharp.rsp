@@ -350,7 +350,6 @@
 "Assets/Scripts/ExplosionController.cs"
 "Assets/Scripts/PlayerController.cs"
 "Assets/Scripts/Refactoring/BulletObject.cs"
-"Assets/Scripts/Refactoring/BulletPool.cs"
 "Assets/Scripts/Refactoring/EnemyObject.cs"
 "Assets/Scripts/Refactoring/EnemyPool.cs"
 "Assets/Scripts/Refactoring/GameManager.cs"

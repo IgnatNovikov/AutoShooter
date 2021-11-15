@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 8022995856576745472}
   - component: {fileID: 8022995856576745473}
   - component: {fileID: 8022995856576745474}
-  - component: {fileID: 5017768754927918451}
   - component: {fileID: 411530975101988656}
   m_Layer: 7
   m_Name: enemy_1
@@ -112,27 +111,6 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1.2552745, y: 0.94336224}
   m_EdgeRadius: 0
---- !u!50 &5017768754927918451
-Rigidbody2D:
-  serializedVersion: 4
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8022995856576745478}
-  m_BodyType: 0
-  m_Simulated: 1
-  m_UseFullKinematicContacts: 0
-  m_UseAutoMass: 0
-  m_Mass: 1
-  m_LinearDrag: 0
-  m_AngularDrag: 0.05
-  m_GravityScale: 0
-  m_Material: {fileID: 0}
-  m_Interpolate: 0
-  m_SleepingMode: 1
-  m_CollisionDetection: 0
-  m_Constraints: 4
 --- !u!114 &411530975101988656
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -146,3 +124,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _speed: 2
+  _health: 2
+  _damage: 1

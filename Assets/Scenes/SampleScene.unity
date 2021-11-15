@@ -721,7 +721,7 @@ GameObject:
   - component: {fileID: 883264653}
   - component: {fileID: 883264655}
   - component: {fileID: 883264656}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Player
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -815,7 +815,6 @@ MonoBehaviour:
   _bulletContainer: {fileID: 782563543}
   _enemyMask: Enemy
   _hpText: {fileID: 1441419804}
-  _ui: {fileID: 1826761243}
 --- !u!61 &883264656
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -2110,6 +2109,8 @@ MonoBehaviour:
   _player: {fileID: 883264655}
   _spawner: {fileID: 248836304}
   _ui: {fileID: 1826761243}
+  _enemyLayer: Enemy
+  _playerLayer: Player
 --- !u!4 &1306359050
 Transform:
   m_ObjectHideFlags: 0

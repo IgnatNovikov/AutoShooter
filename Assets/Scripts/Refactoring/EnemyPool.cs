@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
 public class EnemyPool : MonoBehaviour
 {
     [SerializeField] private GameObject _enemyPrefab;
@@ -29,15 +30,19 @@ public class EnemyPool : MonoBehaviour
     private void Start()
     {
         _gameManager = GameManager.Instance;
-        _ui = _gameManager.UI;
-
-        _enemies = new PoolController(_enemyPrefab.GetComponent<EnemyObject>(), Random.Range(_enemiesMinCount, _enemiesMaxCount));
-
-        Debug.Log(_enemies.GetCount());
 
         SeedSpots();
-        //_gameManager.Player.CanShoot();
+
+        _enemies = new PoolController(_enemyPrefab.GetComponent<EnemyObject>(), Mathf.RoundToInt(CalculatePoolSize() / _enemiesMinTimer + 1));
+        _enemiesCounter = Random.Range(_enemiesMinCount, _enemiesMaxCount);
+
         StartCoroutine(SpawnEnemy());
+    }
+
+    private float CalculatePoolSize()
+    {
+        float distance = _spots[0].transform.position.y - _gameManager.Player.transform.position.y;
+        return distance / _enemyPrefab.GetComponent<EnemyObject>().Speed;
     }
 
     private void SeedSpots()
@@ -85,5 +90,10 @@ public class EnemyPool : MonoBehaviour
     public List<GameObject> GetEnemies()
     {
         return _enemies.GetAllActive();
+    }
+
+    public void Restart()
+    {
+
     }
 }

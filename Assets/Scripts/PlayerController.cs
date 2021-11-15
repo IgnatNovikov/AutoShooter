@@ -24,7 +24,6 @@ public class PlayerController : MonoBehaviour
 
     [Header("UI elements")]
     [SerializeField] private Text _hpText;
-    [SerializeField] private UIController _ui;
 
     private PoolController _bullets;
 
@@ -36,10 +35,9 @@ public class PlayerController : MonoBehaviour
 
     private void Start()
     {
-        _bullets = new PoolController(_bullet.GetComponent<BulletObject>(), 4);
+        _bullets = new PoolController(_bullet.GetComponent<BulletObject>(), Mathf.RoundToInt(_fireRate / _fireRange * _bullet.GetComponent<BulletObject>().Speed) + 1);
 
         _gameManager = GameManager.Instance;
-        _ui = _gameManager.UI;
         _shotDelay = new WaitForSeconds(_fireRate);
 
         _layerMask = (1 << LayerMask.NameToLayer(_enemyMask));
@@ -57,8 +55,8 @@ public class PlayerController : MonoBehaviour
     {
         _canShoot = false;
 
-        GameObject newBullet = _bullets.GetObject();
-        SetBullet(newBullet);
+        //GameObject newBullet = _bullets.GetObject();
+        SetBullet(_bullets.GetObject());
 
         yield return _shotDelay;
         _canShoot = true;
@@ -86,11 +84,10 @@ public class PlayerController : MonoBehaviour
         foreach (GameObject enemy in enemies)
         {
             float range = enemy.transform.position.y - transform.position.y;
-            RaycastHit2D ray = Physics2D.Raycast(transform.position, enemy.transform.position - transform.position, _fireRange, _layerMask);
+            RaycastHit2D ray = Physics2D.Raycast(transform.position, enemy.transform.position - transform.position, _fireRange, _gameManager.enemyMask);
 
             if (ray.collider)
             {
-                Debug.Log("PEW");
                 min_range = range;
                 _nearestEnemy = enemy.transform;
             }
@@ -109,7 +106,7 @@ public class PlayerController : MonoBehaviour
         Redraw_HP();
         if (_currentHp <= 0)
         {
-            _ui.Defeat();
+            _gameManager.Defeat();
         }
     }
 
