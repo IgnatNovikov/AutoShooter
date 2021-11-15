@@ -1,13 +1,15 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class PoolController
 {
     private List<PoolObject> _poolObjects = new List<PoolObject>();
+    private List<int> _freeObjects = new List<int>();
 
     protected GameObject _prefab;
-
     protected Transform _parentTransform;
 
     public PoolController(PoolObject prefab, int count)
@@ -16,55 +18,64 @@ public class PoolController
 
         for (int i = 0; i < count; i++)
         {
-            AddObject(prefab);
+            AddObject();
         }
-    }
-
-    public void AddObject(PoolObject poolObject)
-    {
-        GameObject newObject = GameObject.Instantiate(_prefab.gameObject);
-        newObject.SetActive(false);
-
-        _poolObjects.Add(newObject.GetComponent<PoolObject>());
     }
 
     public GameObject GetObject()
     {
-        GameObject freeObject;
-        for (int i = 0; i < _poolObjects.Count; i++)
+        if (_freeObjects.Count == 0)
         {
-            freeObject = _poolObjects[i].gameObject;
-
-            if (!freeObject.activeInHierarchy)
-                return freeObject;
+            AddObject();
+            return _poolObjects[_poolObjects.Count - 1].gameObject;
         }
+        
+        int free = _freeObjects[0];
+        _freeObjects.RemoveAt(0);
 
-        AddObject(_poolObjects[0]);
-        return _poolObjects[_poolObjects.Count - 1].gameObject;
+        _poolObjects[free].onReturn = Return;
+
+        return _poolObjects[free].gameObject;
     }
 
     public List<GameObject> GetAllActive()
     {
-        if (_poolObjects.Count == 0)
-            return null;
-
-        List<GameObject> active = new List<GameObject>();
-        GameObject activeObject;
+        List<GameObject> allActive = new List<GameObject>();
         for (int i = 0; i < _poolObjects.Count; i++)
         {
-            activeObject = _poolObjects[i].gameObject;
-
-            if (activeObject.activeInHierarchy)
+            if (!_freeObjects.Contains(i))
             {
-                active.Add(activeObject);
+                allActive.Add(_poolObjects[i].gameObject);
             }
         }
 
-        return active;
+        return allActive;
     }
 
-    public int GetCount()
+    public void Refresh()
     {
-        return _poolObjects.Count;
+        _freeObjects.Clear();
+
+        for (int i = 0; i < _poolObjects.Count; i++)
+        {
+            _poolObjects[i].gameObject.SetActive(false);
+            _freeObjects.Add(i);
+        }
+    }
+
+    private void AddObject()
+    {
+        GameObject newObject = GameObject.Instantiate(_prefab.gameObject);
+        newObject.SetActive(false);
+        _freeObjects.Add(_poolObjects.Count);
+
+        _poolObjects.Add(newObject.GetComponent<PoolObject>());
+    }
+
+    private void Return(GameObject returnedObject)
+    {
+        if (returnedObject == null)
+            return;
+        _freeObjects.Add(_poolObjects.IndexOf(returnedObject.GetComponent<PoolObject>()));
     }
 }

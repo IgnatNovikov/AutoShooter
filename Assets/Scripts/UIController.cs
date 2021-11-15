@@ -6,35 +6,15 @@ using UnityEngine.UI;
 
 public class UIController : MonoBehaviour
 {
-    [SerializeField] Text window_text;
+    [Header("Text")]
+    [SerializeField] private Text _windowText;
 
-    [SerializeField] string show_animation;
-    [SerializeField] string hide_animation;
+    [Header("Animations")]
+    [SerializeField] private string show_animation;
+    [SerializeField] private string hide_animation;
 
-    [SerializeField] SpawnerController spawner;
-    [SerializeField] PlayerController player;
-
-    Animator animator;
-
-    private void Awake()
-    {
-        animator = GetComponent<Animator>();
-    }
-
-    void ShowWindow(string text)
-    {
-        Time.timeScale = 0f;
-
-        window_text.text = text;
-        animator.Play(show_animation);
-    }
-
-    void HideWindow()
-    {
-        animator.Play(hide_animation);
-
-        Time.timeScale = 1f;
-    }
+    private GameManager _gameManager;
+    private Animator _animator;
 
     public void Victory()
     {
@@ -50,7 +30,28 @@ public class UIController : MonoBehaviour
     {
         HideWindow();
 
-        spawner.Restart();
-        //player.Restart();
+        _gameManager.Spawner.Restart();
+        _gameManager.Player.Restart();
+    }
+
+    private void Start()
+    {
+        _animator = GetComponent<Animator>();
+        _gameManager = GameManager.Instance;
+    }
+
+    private void ShowWindow(string text)
+    {
+        Time.timeScale = 0f;
+
+        _windowText.text = text;
+        _animator.Play(show_animation);
+    }
+
+    private void HideWindow()
+    {
+        _animator.Play(hide_animation);
+
+        Time.timeScale = 1f;
     }
 }

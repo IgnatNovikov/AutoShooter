@@ -14,33 +14,45 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float _fireRange;
     [SerializeField] private int _damage;
     [SerializeField] private float _bulletSpeed;
-
     [SerializeField] private GameObject _bullet;
     [SerializeField] private Transform _bulletContainer;
-
-    [Header("")]
-    [SerializeField] private string _enemyMask;
-    private int _layerMask;
 
     [Header("UI elements")]
     [SerializeField] private Text _hpText;
 
     private PoolController _bullets;
-
     private WaitForSeconds _shotDelay;
     private Transform _nearestEnemy;
     private GameManager _gameManager;
-
     private bool _canShoot;
+
+    public void GetHit(int damage)
+    {
+        _currentHp -= damage;
+        Redraw_HP();
+        if (_currentHp <= 0)
+        {
+            _bullets.Refresh();
+            _gameManager.Defeat();
+        }
+    }
+
+    public void Restart()
+    {
+        _canShoot = true;
+        _currentHp = _maxHealthPoints;
+
+        _bullet.GetComponent<BulletObject>().SetParameters(_bulletSpeed, _damage, _fireRange);
+
+        Redraw_HP();
+    }
 
     private void Start()
     {
-        _bullets = new PoolController(_bullet.GetComponent<BulletObject>(), Mathf.RoundToInt(_fireRate / _fireRange * _bullet.GetComponent<BulletObject>().Speed) + 1);
+        _bullets = new PoolController(_bullet.GetComponent<BulletObject>(), Mathf.RoundToInt(_fireRange / _bullet.GetComponent<BulletObject>().Speed / _fireRate) + 1);
 
         _gameManager = GameManager.Instance;
         _shotDelay = new WaitForSeconds(_fireRate);
-
-        _layerMask = (1 << LayerMask.NameToLayer(_enemyMask));
 
         Restart();
     }
@@ -55,7 +67,6 @@ public class PlayerController : MonoBehaviour
     {
         _canShoot = false;
 
-        //GameObject newBullet = _bullets.GetObject();
         SetBullet(_bullets.GetObject());
 
         yield return _shotDelay;
@@ -64,12 +75,11 @@ public class PlayerController : MonoBehaviour
 
     private void SetBullet(GameObject bullet)
     {
+        bullet.SetActive(true);
         bullet.transform.parent = _bulletContainer;
         bullet.transform.position = transform.position;
         bullet.transform.rotation = Quaternion.LookRotation(new Vector3(0, 0, 1), _nearestEnemy.position - transform.position);
         bullet.transform.GetComponent<BulletObject>().SetTarget(_nearestEnemy.transform);
-
-        bullet.SetActive(true);
     }
 
     private bool CheckNearestEnemy()
@@ -98,26 +108,6 @@ public class PlayerController : MonoBehaviour
         }
 
         return false;
-    }
-
-    public void GetHit(int damage)
-    {
-        _currentHp -= damage;
-        Redraw_HP();
-        if (_currentHp <= 0)
-        {
-            _gameManager.Defeat();
-        }
-    }
-
-    public void Restart()
-    {
-        _canShoot = true;
-        _currentHp = _maxHealthPoints;
-
-        _bullet.GetComponent<BulletObject>().SetParameters(_bulletSpeed, _damage, _fireRange);
-
-        Redraw_HP();
     }
 
     private void Redraw_HP()

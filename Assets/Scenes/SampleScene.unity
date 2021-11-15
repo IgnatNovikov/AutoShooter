@@ -154,9 +154,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _enemyPrefab: {fileID: 8022995856576745478, guid: 1e8bfc8acb079b44db3d6c0a370361d2, type: 3}
   _enemiesMinCount: 5
-  _enemiesMaxCount: 5
-  _enemiesMinTimer: 5
-  _enemiesMaxTimer: 5
+  _enemiesMaxCount: 10
+  _enemiesMinTimer: 4
+  _enemiesMaxTimer: 7
   _spotCount: 2
   _spot: {fileID: 4503598015357450505, guid: e29d96b86c0cdf340aa2171ea70feb94, type: 3}
   _leftSide: {fileID: 1511683181}
@@ -807,13 +807,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _maxHealthPoints: 10
-  _fireRate: 2
-  _fireRange: 14
+  _fireRate: 4
+  _fireRange: 16
   _damage: 1
-  _bulletSpeed: 5
+  _bulletSpeed: 4
   _bullet: {fileID: 5603090448084265864, guid: 2e492488f8693c04fb527c71c7811eab, type: 3}
   _bulletContainer: {fileID: 782563543}
-  _enemyMask: Enemy
   _hpText: {fileID: 1441419804}
 --- !u!61 &883264656
 BoxCollider2D:
@@ -3486,11 +3485,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 61b7391defebe124f8b06353441621b3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  window_text: {fileID: 1913872899}
+  _windowText: {fileID: 1913872899}
   show_animation: Showing
   hide_animation: Hiding
-  spawner: {fileID: 2052267532}
-  player: {fileID: 883264655}
 --- !u!1 &1913872897
 GameObject:
   m_ObjectHideFlags: 0

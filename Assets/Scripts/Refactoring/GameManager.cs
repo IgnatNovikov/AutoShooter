@@ -6,15 +6,15 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
 
+    public int enemyMask { get; private set; }
+    public int playerMask { get; private set; }
+
     [Header("References")]
     [SerializeField] private PlayerController _player;
     [SerializeField] private EnemyPool _spawner;
     [SerializeField] private UIController _ui;
     [SerializeField] private string _enemyLayer;
     [SerializeField] private string _playerLayer;
-
-    public int enemyMask { get; private set; }
-    public int playerMask { get; private set; }
 
     public PlayerController Player
     {
@@ -49,7 +49,7 @@ public class GameManager : MonoBehaviour
         playerMask = 1 << LayerMask.NameToLayer(_playerLayer);
     }
 
-    void RestartGame()
+    public void RestartGame()
     {
         _spawner.Restart();
         _player.Restart();
@@ -57,11 +57,11 @@ public class GameManager : MonoBehaviour
 
     public void Defeat()
     {
-
+        _ui.Defeat();
     }
 
     public void Victory()
     {
-
+        _ui.Victory();
     }
 }

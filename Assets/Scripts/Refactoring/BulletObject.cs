@@ -7,6 +7,7 @@ public class BulletObject : PoolObject, IMover
     [SerializeField] private float _speed;
     [SerializeField] private int _damage;
     [SerializeField] private float _maxRange;
+
     private Transform _target;
     private Vector3 _lastDirection;
     private static WaitForSeconds _lifeTime;
@@ -17,31 +18,6 @@ public class BulletObject : PoolObject, IMover
     public float Speed
     {
         get => _speed;
-    }
-
-    private void Start()
-    {
-        _moves = true;
-    }
-
-    private void Update()
-    {
-        if (_target != null)
-        {
-            _lastDirection = _target.position - transform.position;
-        }
-
-        if (_moves)
-        {
-            if (Hit())
-            {
-                _ray.collider.gameObject.GetComponent<EnemyObject>().GetHit(_damage);
-                StopAllCoroutines();
-                ReturnToPool();
-            }
-            Move(_lastDirection);
-            transform.rotation = Quaternion.LookRotation(Vector3.forward, _lastDirection);
-        }
     }
 
     public void SetParameters(float speed, int damage, float maxRange)
@@ -67,37 +43,55 @@ public class BulletObject : PoolObject, IMover
         transform.Translate(Time.deltaTime * _speed * direction.normalized);
     }
 
-    public void Launch(Transform target, float speed)
+    public void SetTarget(Transform target)
     {
-        gameObject.SetActive(true);
-        
-        _speed = speed;
-        StartCoroutine(Counter(target));
+        _isAlive = true;
+        _target = target;
+        StartCoroutine(Counter());
     }
 
-    private IEnumerator Counter(Transform target)
+    private void Start()
+    {
+        _isAlive = true;
+    }
+
+    private void Update()
+    {
+        if (_isAlive)
+        {
+            if (_target.gameObject.activeInHierarchy)
+            {
+                _lastDirection = _target.position - transform.position;
+            }
+
+            if (Hit())
+            {
+                _isAlive = false;
+                _ray.collider.gameObject.GetComponent<EnemyObject>().GetHit(_damage);
+                StopAllCoroutines();
+                ReturnToPool(gameObject);
+            }
+            Move(_lastDirection);
+            transform.rotation = Quaternion.LookRotation(Vector3.forward, _lastDirection);
+        }
+    }
+
+    private IEnumerator Counter()
     {
         _lifeTime = CalculateCounterFromDistance();
-
-        _target = target;
-        _moves = true;
+        _isAlive = true;
 
         yield return _lifeTime;
 
         if (this != null)
         {
-            ReturnToPool();
+            ReturnToPool(gameObject);
         }
     }
 
     private WaitForSeconds CalculateCounterFromDistance()
     {
         return new WaitForSeconds(_maxRange / _speed);
-    }
-
-    public void SetTarget(Transform target)
-    {
-        _target = target;
     }
 
     private bool Hit()

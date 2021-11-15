@@ -5,11 +5,11 @@ using UnityEngine;
 
 public class EnemyPool : MonoBehaviour
 {
+    [Header("Spawn parameters")]
     [SerializeField] private GameObject _enemyPrefab;
 
     [SerializeField] private int _enemiesMinCount;
     [SerializeField] private int _enemiesMaxCount;
-
     [SerializeField] private int _enemiesMinTimer;
     [SerializeField] private int _enemiesMaxTimer;
 
@@ -20,17 +20,26 @@ public class EnemyPool : MonoBehaviour
     [SerializeField] private Transform _rightSide;
     
     private GameManager _gameManager;
-    private UIController _ui;
-
     private int _enemiesCounter;
     private List<GameObject> _spots = new List<GameObject>();
-
     private PoolController _enemies;
+
+    public List<GameObject> GetEnemies()
+    {
+        return _enemies.GetAllActive();
+    }
+
+    public void Restart()
+    {
+        _enemiesCounter = Random.Range(_enemiesMinCount, _enemiesMaxCount);
+        _enemies.Refresh();
+
+        StartCoroutine(SpawnEnemy());
+    }
 
     private void Start()
     {
         _gameManager = GameManager.Instance;
-
         SeedSpots();
 
         _enemies = new PoolController(_enemyPrefab.GetComponent<EnemyObject>(), Mathf.RoundToInt(CalculatePoolSize() / _enemiesMinTimer + 1));
@@ -71,29 +80,22 @@ public class EnemyPool : MonoBehaviour
         return new Vector2(pos.x, pos.y);
     }
 
-    IEnumerator SpawnEnemy()
+    private IEnumerator SpawnEnemy()
     {
-        yield return new WaitForSeconds(Random.Range(_enemiesMinTimer, _enemiesMaxTimer));
-
         GameObject enemy = _enemies.GetObject();
         enemy.transform.SetParent(transform);
         enemy.transform.position = _spots[Random.Range(0, _spots.Count)].transform.position;
         enemy.SetActive(true);
+        enemy.GetComponent<EnemyObject>().SetAlive();
+
+        yield return new WaitForSeconds(Random.Range(_enemiesMinTimer, _enemiesMaxTimer));
 
         _enemiesCounter--;
         if (_enemiesCounter <= 0)
-            StopCoroutine(SpawnEnemy());
-
-        StartCoroutine(SpawnEnemy());
-    }
-
-    public List<GameObject> GetEnemies()
-    {
-        return _enemies.GetAllActive();
-    }
-
-    public void Restart()
-    {
-
+        {
+            _gameManager.Victory();
+        }
+        else
+            StartCoroutine(SpawnEnemy());
     }
 }
