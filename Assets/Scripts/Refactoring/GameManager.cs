@@ -8,6 +8,9 @@ public class GameManager : MonoBehaviour
 
     public int enemyMask { get; private set; }
     public int playerMask { get; private set; }
+    public State state;
+
+    private GameState _gameState;
 
     [Header("References")]
     [SerializeField] private PlayerController _player;
@@ -15,6 +18,12 @@ public class GameManager : MonoBehaviour
     [SerializeField] private UIController _ui;
     [SerializeField] private string _enemyLayer;
     [SerializeField] private string _playerLayer;
+
+    private enum GameState
+    {
+        PLAY,
+        PAUSE
+    }
 
     public PlayerController Player
     {
@@ -45,6 +54,7 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
+        state = new StatePlay();
         enemyMask = 1 << LayerMask.NameToLayer(_enemyLayer);
         playerMask = 1 << LayerMask.NameToLayer(_playerLayer);
     }
@@ -53,15 +63,18 @@ public class GameManager : MonoBehaviour
     {
         _spawner.Restart();
         _player.Restart();
+        state.Next();
     }
 
     public void Defeat()
     {
         _ui.Defeat();
+        state.Next();
     }
 
     public void Victory()
     {
         _ui.Victory();
+        state.Next();
     }
 }
