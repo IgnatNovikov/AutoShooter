@@ -2,7 +2,27 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-abstract public class State
+public class State
 {
-    public abstract void Next();
+    public virtual void Enter()
+    {
+
+    }
+
+    public virtual void Handle()
+    {
+
+    }
+
+    public virtual void LogicUpdate()
+    {
+
+    }
+
+    public virtual void Exit()
+    {
+
+    }
 }
+
+

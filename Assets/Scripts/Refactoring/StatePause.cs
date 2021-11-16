@@ -4,9 +4,8 @@ using UnityEngine;
 
 public class StatePause : State
 {
-    public override void Next()
+    public void Next()
     {
         Time.timeScale = 1f;
-        GameManager.Instance.state = new StatePlay();
     }
 }

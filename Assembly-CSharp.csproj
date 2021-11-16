@@ -56,6 +56,7 @@
     <Compile Include="Assets\Scripts\BulletController.cs" />
     <Compile Include="Assets\Scripts\Refactoring\PoolController.cs" />
     <Compile Include="Assets\Scripts\BackgroundController.cs" />
+    <Compile Include="Assets\Scripts\Refactoring\StatePlay.cs" />
     <Compile Include="Assets\Scripts\Refactoring\EnemyPool.cs" />
     <Compile Include="Assets\Scripts\PlayerController.cs" />
     <Compile Include="Assets\Scripts\Refactoring\IMover.cs" />
@@ -65,13 +66,15 @@
     <Compile Include="Assets\Scripts\SpawnerController.cs" />
     <Compile Include="Assets\Scripts\Refactoring\GameManager.cs" />
     <Compile Include="Assets\Scripts\Refactoring\EnemyObject.cs" />
+    <Compile Include="Assets\Scripts\Refactoring\StatePause.cs" />
     <Compile Include="Assets\Scripts\EnemyController.cs" />
     <Compile Include="Assets\Scripts\ExplosionController.cs" />
+    <Compile Include="Assets\Scripts\Refactoring\State.cs" />
     <Compile Include="Assets\Scripts\Refactoring\BulletObject.cs" />
     <Compile Include="Assets\Scripts\Refactoring\PoolObject.cs" />
-    <Compile Include="Assets\Scripts\Refactoring\StatePlay.cs" />
-    <Compile Include="Assets\Scripts\Refactoring\StatePause.cs" />
-    <Compile Include="Assets\Scripts\Refactoring\State.cs" />
+    <Compile Include="Assets\Scripts\Refactoring\StateMachineFolder\StateMachine.cs" />
+    <Compile Include="Assets\Scripts\Refactoring\StateMachineFolder\IState.cs" />
+    <Compile Include="Assets\Scripts\Refactoring\StateMachineFolder\TurretController.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">

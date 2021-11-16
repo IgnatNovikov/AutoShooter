@@ -40,7 +40,7 @@ public class UIController : MonoBehaviour
 
     private void ShowWindow(string text)
     {
-        //Time.timeScale = 0f;
+        Time.timeScale = 0f;
 
         _windowText.text = text;
         _animator.Play(show_animation);
@@ -50,6 +50,6 @@ public class UIController : MonoBehaviour
     {
         _animator.Play(hide_animation);
 
-        //Time.timeScale = 1f;
+        Time.timeScale = 1f;
     }
 }
