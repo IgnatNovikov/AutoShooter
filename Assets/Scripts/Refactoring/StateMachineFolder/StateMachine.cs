@@ -2,41 +2,39 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class StateMachine : MonoBehaviour
+public class StateMachine
 {
-    public IState currentState;
+    private IState _currentState;
+    private List<IState> _states = new List<IState>();
 
-    public GameObject _gameObject { get; private set; }
-    public Transform _spot { get; private set; }
-    public GameObject _target { get; private set; }
-
-    public void Initialize(IState startingState, GameObject thisGameObject)
+    public IState Initialize(IState state)
     {
-        currentState = startingState;
-        _gameObject = thisGameObject;
-        startingState.Enter(this);
-    }
+        _states.Add(state);
 
-    public void LogicUpdate()
-    {
-        currentState.LogicUpdate(this);
+        return state;
     }
 
     public void ChangeState(IState newState)
     {
-        currentState.Exit(this);
-        currentState = newState;
-        currentState.Enter(this);
+        if (_currentState != null)
+        {
+            _currentState.Exit();
+        }
+        _currentState = newState;
+        _currentState.Enter();
     }
 
-    public void SetSpot(Transform newSpot)
+    public void Update()
     {
-        _spot = newSpot;
-    }
+        ITransition transition = _currentState.CheckChangeState();
 
-    public void SetTarget(GameObject target)
-    {
-        if (target != null)
-            _target = target;
+        if (transition != null)
+        {
+            _currentState.Exit();
+            _currentState = transition.GetNextState();
+            _currentState.Enter();
+        }
+
+        _currentState.LogicUpdate();
     }
 }

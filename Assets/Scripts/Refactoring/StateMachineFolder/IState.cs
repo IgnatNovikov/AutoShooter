@@ -1,104 +1,187 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Threading;
+using System.Threading.Tasks;
 
 public interface IState
 {
-    void Enter(StateMachine context);
+    IState On(Func<bool> checker, IState newState);
+    ITransition CheckChangeState();
 
-    void LogicUpdate(StateMachine context);
-
-    void Exit(StateMachine context);
+    void Enter();
+    void LogicUpdate();
+    void Exit();
 }
 
-public class StateMove : IState
+public class State : IState
 {
-    public void Enter(StateMachine context)
+    protected StateContext _context;
+
+    List<ITransition> _transitions = new List<ITransition>();
+
+    public State(StateContext context)
+    {
+        _context = context;
+    }
+
+    public IState On(Func<bool> checker, IState nextState)
+    {
+        _transitions.Add(new Transition(checker, nextState));
+
+        return this;
+    }
+
+    public ITransition CheckChangeState()
+    {
+        foreach (var transition in _transitions)
+        {
+            if (transition.Check())
+            {
+                return transition;
+            }
+        }
+        return null;
+    }
+
+    public virtual void Enter()
+    {
+
+    }
+
+    public virtual void LogicUpdate()
+    {
+
+    }
+
+    public virtual void Exit()
+    {
+
+    }
+}
+
+public class StateContext
+{
+    
+
+    public GameObject gameObject { get; set; }
+    public GameObject target { get; set; }
+    public Transform spot { get; set; }
+
+    public void TargetDown()
+    {
+
+    }
+}
+
+public class StateMove : State
+{
+    public StateMove(StateContext context) : base(context)
+    {
+
+    }
+
+    public override void Enter()
     {
         Debug.Log("Enter MOVE");
     }
 
-    public void LogicUpdate(StateMachine context)
+    public override void LogicUpdate()
     {
-        Vector3 direction = context._spot.position - context._gameObject.transform.position;
-        if (context._gameObject.transform.position != context._spot.position)
-            context._gameObject.transform.Translate(direction * Time.deltaTime);
-        else
-            Exit(context);
+
+        if (_context.gameObject.transform.position != _context.spot.position)
+        {
+            Vector3 direction = _context.spot.position - _context.gameObject.transform.position;
+            _context.gameObject.transform.Translate(direction * Time.deltaTime);
+        }
     }
 
-    public void Exit(StateMachine context)
+    public override void Exit()
     {
         Debug.Log("Exit MOVE");
-        context.ChangeState(new StateSeek());
     }
 }
 
-public class StateShoot : MonoBehaviour, IState
+public class StateShoot : State
 {
     private GameObject _target;
+    private bool _canShoot;
 
-    public void Enter(StateMachine context)
+    public StateShoot(StateContext context) : base(context)
+    {
+
+    }
+
+    public override void Enter()
     {
         Debug.Log("Enter SHOOT");
 
-        if (context._target != null)
+        _canShoot = false;
+        if (_context.target != null)
         {
-            _target = context._target;
+            _target = _context.target;
+            _canShoot = true;
         }
-        else
-            Exit(context);
+        //else
+        //    Exit(context);
     }
 
-    public void LogicUpdate(StateMachine context)
+    public override async void LogicUpdate()
     {
         //стреляем, пока не уничтожим цель
 
-        if (_target == null)
+        if (_target != null && _canShoot)
         {
-            Exit(context);
+            _canShoot = false;
+            await Task.Run(() => Shot());
+        }
+        else
+        {
+
         }
     }
 
-    public void Exit(StateMachine context)
+    private void Shot()
+    {
+        Thread.Sleep(5000);     //задержка для выстрела
+        Debug.Log("SHOT");
+        _canShoot = true;
+        return;
+    }
+
+    public override void Exit()
     {
         Debug.Log("Exit SHOOT");
 
         //когда уничтожили цель, проверяем, не послали ли нас двигаться в другую точку
-
-        if (context._spot == null)
-            context.ChangeState(new StateSeek());
-        else
-            context.ChangeState(new StateMove());
     }
 }
 
-public class StateSeek : IState
+public class StateSeek : State
 {
-    public void Enter(StateMachine context)
+    public StateSeek(StateContext context) : base(context)
+    {
+
+    }
+
+    public override void Enter()
     {
         Debug.Log("Enter SEEK");
-
-        if (context._target != null)    //если у нас уже есть цель, то выходим и стреляем
-            Exit(context);
     }
 
-    public void LogicUpdate(StateMachine context)
+    public override void LogicUpdate()
     {
 
-        if (context._target != null)
-            Exit(context);
+        if (_context.target != null)
+        {
+            _context.TargetDown();
+        }
     }
 
-    public void Exit(StateMachine context)
+    public override void Exit()
     {
         Debug.Log("Exit SEEK");
-
-        if (context._target != null)
-            context.ChangeState(new StateShoot());
-        else if (context._spot != null)
-            context.ChangeState(new StateMove());
-        else
-            Enter(context);
     }
+    
 }
