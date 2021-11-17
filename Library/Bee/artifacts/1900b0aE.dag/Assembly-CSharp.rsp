@@ -350,6 +350,8 @@
 "Assets/Scripts/ExplosionController.cs"
 "Assets/Scripts/PlayerController.cs"
 "Assets/Scripts/Refactoring/BulletObject.cs"
+"Assets/Scripts/Refactoring/Dialog/DialogAsync.cs"
+"Assets/Scripts/Refactoring/Dialog/DialogController.cs"
 "Assets/Scripts/Refactoring/EnemyObject.cs"
 "Assets/Scripts/Refactoring/EnemyPool.cs"
 "Assets/Scripts/Refactoring/GameManager.cs"
